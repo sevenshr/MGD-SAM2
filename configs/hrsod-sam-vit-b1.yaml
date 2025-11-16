@@ -1,0 +1,189 @@
+train_dataset:
+  dataset:
+    name: paired-image-folders
+    args:
+      root_path_1: /data/data3/yao/shr_code/Dataset/DUTS/DUTS-TR/DUTS-TR-Image
+      root_path_2: /data/data3/yao/shr_code/Dataset/DUTS/DUTS-TR/DUTS-TR-Mask
+      cache: none
+      split_key: train
+  wrapper:
+    name: train
+    args:
+      inp_size: 512
+      augment: false
+
+  dataset1:
+    name: paired-image-folders
+    args:
+      root_path_1: /data/data3/yao/shr_code/Dataset/HRSOD/HRSOD_train
+      root_path_2: /data/data3/yao/shr_code/Dataset/HRSOD/HRSOD_train_mask
+      cache: none
+      split_key: train
+  wrapper1:
+    name: train
+    args:
+      inp_size: 512
+      augment: false
+  batch_size: 2
+
+val_dataset:
+  dataset:
+    name: paired-image-folders
+    args:
+      root_path_1: /data/data3/yao/shr_code/Dataset/DUTS/DUTS-TE/DUTS-TE-Image
+      root_path_2: /data/data3/yao/shr_code/Dataset/DUTS/DUTS-TE/DUTS-TE-Mask
+      cache: none
+      split_key: test
+  wrapper:
+    name: val
+    args:
+      inp_size: 512
+  batch_size: 8
+
+val_dataset2:
+  dataset:
+    name: paired-image-folders
+    args:
+      root_path_1: /data/data3/yao/shr_code/Dataset/HKU-IS/test/image
+      root_path_2: /data/data3/yao/shr_code/Dataset/HKU-IS/test/mask
+      cache: none
+      split_key: test
+  wrapper:
+    name: val
+    args:
+      inp_size: 512
+  batch_size: 8
+
+val_dataset3:
+  dataset:
+    name: paired-image-folders
+    args:
+      root_path_1: /data/data3/yao/shr_code/Dataset/DAVIS-S/im
+      root_path_2: /data/data3/yao/shr_code/Dataset/DAVIS-S/gt
+      cache: none
+      split_key: test
+  wrapper:
+    name: val
+    args:
+      inp_size: 512
+  batch_size: 8
+
+val_dataset4:
+  dataset:
+    name: paired-image-folders
+    args:
+      root_path_1: /data/data3/yao/shr_code/Dataset/HRSOD/HRSOD_test
+      root_path_2: /data/data3/yao/shr_code/Dataset/HRSOD/HRSOD_test_mask
+      cache: none
+      split_key: test
+  wrapper:
+    name: val
+    args:
+      inp_size: 512
+  batch_size: 8
+
+val_dataset5:
+  dataset:
+    name: paired-image-folders
+    args:
+      root_path_1: /data/data3/yao/shr_code/Dataset/UHRSD/UHRSD_TE_2K/image
+      root_path_2: /data/data3/yao/shr_code/Dataset/UHRSD/UHRSD_TE_2K/mask
+      cache: none
+      split_key: test
+  wrapper:
+    name: val
+    args:
+      inp_size: 512
+  batch_size: 8
+
+
+test_dataset:
+  dataset:
+    name: paired-image-folders
+    args:
+      root_path_1: /data/koujiahao/SAM2-Adapter-1116/datasets/DUTS/DUTS-TE/DUTS-TE-Image
+      root_path_2: /data/koujiahao/SAM2-Adapter-1116/datasets/DUTS/DUTS-TE/DUTS-TE-Mask
+      cache: none
+      split_key: test
+  wrapper:
+    name: test
+    args:
+      inp_size: 512
+  batch_size: 1
+
+eval_type: cod
+sam_checkpoint: /data/data3/yao/shr_code/MGDSAM/checkpoint/sam2.1_hiera_base_plus.pt
+data_norm:
+  inp:
+    sub:
+    - 0.5
+    div:
+    - 0.5
+  gt:
+    sub:
+    - 0.5
+    div:
+    - 0.5
+  gt_rgb:
+    sub:
+    - 0.5
+    div:
+    - 0.5
+model:
+  name: sam
+  args:
+    inp_size: 512
+    loss: iou
+    encoder_mode:
+      name: sam
+      num_heads_hiera: 2
+      stages: [2, 3, 16, 3]
+      global_att_blocks: [12, 16, 10]
+      window_pos_embed_bkg_spatial_size: [14, 14]
+      window_spec: [8, 4, 14, 7]
+      num_pos_feats: 256
+      normalize: true
+      scale: null
+      temperature: 10000
+      d_model: 256
+      backbone_channel_list: [896, 448, 224, 112]
+      fpn_top_down_levels: [2, 3]
+      fpn_interp_model: nearest
+      img_size: 512
+      mlp_ratio: 4
+      patch_size: 16
+      qkv_bias: true
+      use_rel_pos: true
+      window_size: 14
+      out_chans: 256
+      scale_factor: 32
+      input_type: fft
+      freq_nums: 0.25
+      prompt_type: highpass
+      prompt_embed_dim: 256
+      tuning_stage: 1234
+      handcrafted_tune: False
+      embedding_tune: true
+      adaptor: adaptor
+      embed_dim: 144
+      depth: 32
+      num_heads: 2
+      global_attn_indexes:
+      - 7
+      - 15
+      - 23
+      - 31
+optimizer:
+  name: adamw
+  args:
+    lr: 0.0002
+    weight_decay: 0
+lr_min: 1.0e-7
+epoch_max: 80
+
+multi_step_lr:
+  milestones:
+  - 1
+  gamma: 0.1
+epoch_val: 1
+epoch_save: 1
